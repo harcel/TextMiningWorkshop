@@ -7,12 +7,12 @@
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
 def to_lower(text):
-    return text.str.lower()
+    return text.lower()
 
 def remove_punctuation(text):
     pattern = "[" + string.punctuation + "]+"
-    text = text.str.replace(pattern, " ", regex=True)
-    text = text.str.replace("\n", " ", regex=False)
+    text = re.sub(pattern, " ", text)
+    text = text.replace("\n", " ")
     return text
 
 def lemmatize_stopwords(s):
@@ -27,7 +27,7 @@ def lemmatize_stopwords(s):
     return ' '.join(lemma)
 
 def lsw(text):
-    return text.apply(lemmatize_stopwords)
+    return lemmatize_stopwords(text)
 
 
 def preprocessor(text):
@@ -42,5 +42,7 @@ vectorizer = CountVectorizer(min_df=4,
                              ngram_range=[1,2],
                             preprocessor=preprocessor)
 
-bow = vectorizer.fit_transform(data.text)
+df = pd.DataFrame({'text':data.data, 'target':data.target})
+
+bow = vectorizer.fit_transform(df.text)
 bow.shape
